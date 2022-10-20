@@ -7,7 +7,9 @@ environment:
 
 dependencies:
   authenticator:
-    path: ../authenticator
+    git:
+      url: https://github.com/daniellampl/authenticator.git
+      path: packages/authenticator
   dio: ^4.0.0
 
 dev_dependencies:
