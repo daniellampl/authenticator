@@ -107,7 +107,7 @@ class RefreshAuthenticator<T extends RefreshableAuthenticatorToken>
     extends Authenticator<T> {
   /// {@marco authenticator.refresh_authenticator}
   RefreshAuthenticator({
-    required AuthenticatorClient<T> client,
+    required RefreshAuthenticatorClient<T> client,
     AuthenticatorStorage<T>? localStorage,
   }) : super(
           client: client,
@@ -118,15 +118,14 @@ class RefreshAuthenticator<T extends RefreshableAuthenticatorToken>
   Future<void> refresh() async {
     _assertInitialized();
 
-    final refreshToken = _token?.refreshToken;
-
-    if (refreshToken == null) {
+    if (_token == null) {
       // TODO(daniellampl): throw proper exception
       throw Exception();
     }
 
     try {
-      final newToken = await client.refreshToken(refreshToken);
+      final newToken = await (client as RefreshAuthenticatorClient<T>)
+          .refreshToken(_token!);
       await setToken(newToken);
     } catch (e) {
       await clearToken();
@@ -145,10 +144,13 @@ abstract class AuthenticatorClient<T extends AuthenticatorToken> {
 
   ///
   Future<T> signIn(SignInProvider signInProvider);
+}
 
-  Future<T> refreshToken(String refreshToken) {
-    throw UnimplementedError();
-  }
+///
+abstract class RefreshAuthenticatorClient<
+    T extends RefreshableAuthenticatorToken> extends AuthenticatorClient<T> {
+  ///
+  Future<T> refreshToken(T token);
 }
 
 /// {@template authenticator.sign_in_provider}
