@@ -68,20 +68,6 @@ abstract class Authenticator<T extends AuthenticatorToken> {
   }
 
   ///
-  Future<void> signOut() async {
-    _assertInitialized();
-
-    try {
-      await client.signOut();
-    } catch (e) {
-      // TODO(daniellampl): throw proper exception
-      throw Exception();
-    } finally {
-      await clearToken();
-    }
-  }
-
-  ///
   Future<void> setToken(T token) async {
     _assertInitialized();
 
@@ -160,10 +146,6 @@ abstract class AuthenticatorClient<T extends AuthenticatorToken> {
   ///
   Future<T> signIn(SignInProvider signInProvider);
 
-  ///
-  Future<void> signOut();
-
-  ///
   Future<T> refreshToken(String refreshToken) {
     throw UnimplementedError();
   }
