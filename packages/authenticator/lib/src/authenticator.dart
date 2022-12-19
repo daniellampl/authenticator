@@ -103,7 +103,7 @@ abstract class Authenticator<T extends AuthenticatorToken> {
 /// {@template authenticator.refresh_authenticator}
 ///
 /// {@endtemplate}
-class RefreshAuthenticator<T extends RefreshableAuthenticatorToken>
+abstract class RefreshAuthenticator<T extends AuthenticatorToken>
     extends Authenticator<T> {
   /// {@marco authenticator.refresh_authenticator}
   RefreshAuthenticator({
@@ -124,7 +124,7 @@ class RefreshAuthenticator<T extends RefreshableAuthenticatorToken>
     }
 
     try {
-      final newToken = await (delegate as RefreshAuthenticatorDelegate<T>)
+      final newToken = await (super.delegate as RefreshAuthenticatorDelegate<T>)
           .refreshToken(_token!);
       await setToken(newToken);
     } catch (e) {
@@ -147,8 +147,8 @@ abstract class AuthenticatorDelegate<T extends AuthenticatorToken> {
 }
 
 ///
-abstract class RefreshAuthenticatorDelegate<
-    T extends RefreshableAuthenticatorToken> extends AuthenticatorDelegate<T> {
+abstract class RefreshAuthenticatorDelegate<T extends AuthenticatorToken>
+    extends AuthenticatorDelegate<T> {
   const RefreshAuthenticatorDelegate();
 
   ///

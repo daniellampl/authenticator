@@ -6,7 +6,7 @@ import 'package:dio/dio.dart';
 typedef ShouldRefresh = bool Function(int);
 
 ///
-class AuthenticatorDioInterceptor<T extends RefreshableAuthenticatorToken>
+class AuthenticatorDioInterceptor<T extends AuthenticatorToken>
     extends QueuedInterceptor {
   ///
   AuthenticatorDioInterceptor(
