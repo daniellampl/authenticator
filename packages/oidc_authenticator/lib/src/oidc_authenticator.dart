@@ -336,13 +336,14 @@ class OidcAuthenticator extends RefreshAuthenticator<OidcToken> {
         prompt: prompt,
         loginHint: loginHint,
         preferEphemeralSession: preferEphemeralSession,
-        additionalParameters: _buildAdditionalParameters(
+        additionalParameters: _builAuthenticateAdditionalParameters(
           nonce: nonce,
           display: display,
           maxAge: maxAge,
           uiLocales: uiLocales,
           idTokenHint: idTokenHint,
           acrValues: acrValues,
+          additionalParameters: additionalParameters,
         ),
       ),
     );
@@ -382,46 +383,46 @@ class OidcAuthenticator extends RefreshAuthenticator<OidcToken> {
   }
 
   ///
-  Map<String, String> _buildAdditionalParameters({
+  Map<String, String> _builAuthenticateAdditionalParameters({
     String? nonce,
     OidcDisplayValue? display,
     int? maxAge,
     List<String>? uiLocales,
     String? idTokenHint,
     List<String>? acrValues,
-    Map<String, String>? parameters,
+    Map<String, String>? additionalParameters,
   }) {
-    final additionalParameters = <String, String>{};
+    final result = <String, String>{};
 
-    if (parameters != null && parameters.isNotEmpty) {
-      additionalParameters.addAll(parameters);
+    if (additionalParameters != null && additionalParameters.isNotEmpty) {
+      result.addAll(additionalParameters);
     }
 
     if (nonce != null) {
-      additionalParameters['nonce'] = nonce;
+      result['nonce'] = nonce;
     }
 
     if (display != null) {
-      additionalParameters['display'] = _displayValueToString(display);
+      result['display'] = _displayValueToString(display);
     }
 
     if (maxAge != null) {
-      additionalParameters['max_age'] = maxAge.toString();
+      result['max_age'] = maxAge.toString();
     }
 
     if (uiLocales != null && uiLocales.isNotEmpty) {
-      additionalParameters['ui_locales'] = uiLocales.join(' ');
+      result['ui_locales'] = uiLocales.join(' ');
     }
 
     if (idTokenHint != null) {
-      additionalParameters['id_token_hint'] = idTokenHint;
+      result['id_token_hint'] = idTokenHint;
     }
 
     if (acrValues != null && acrValues.isNotEmpty) {
-      additionalParameters['acr_values'] = acrValues.join(' ');
+      result['acr_values'] = acrValues.join(' ');
     }
 
-    return additionalParameters;
+    return result;
   }
 
   String _displayValueToString(OidcDisplayValue display) {
