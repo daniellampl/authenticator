@@ -1,0 +1,30 @@
+name: authenticator
+
+packages:
+  - packages/**
+
+ide:
+  intellij: false
+
+scripts:
+  lint:all:
+    run: melos run analyze && melos run format:check
+    description: Run all static analysis checks.
+
+  analyze:
+    exec: dart analyze
+    description: Run `dart analyze` for all packages.
+
+  format:
+    exec: dart format --fix .
+    description: Run `dart format --fix` for all packages.
+
+  format:check:
+    exec: dart format --set-exit-if-changed .
+    description: Run `dart format --set-exit-if-changed` for all packages.
+
+  test:
+    exec: flutter test --no-pub --test-randomize-ordering-seed random
+    description: Run tests for all packages.
+    select-package:
+      dir-exists: "test"
