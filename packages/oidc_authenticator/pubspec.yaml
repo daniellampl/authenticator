@@ -17,3 +17,6 @@ dependencies:
       path: packages/authenticator_storage
   flutter_appauth: ^4.2.1
   http: ^0.13.5
+
+dev_dependencies:
+  deckweiss_lints: ^1.0.0+1

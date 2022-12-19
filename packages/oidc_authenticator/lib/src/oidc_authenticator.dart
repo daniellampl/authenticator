@@ -113,7 +113,6 @@ class TokenExchangeSignInProvider extends SignInProvider {
   const TokenExchangeSignInProvider({
     required this.subjectToken,
     required this.subjectTokenType,
-    bool? preferEphemeralSession,
     this.grantType = OidcGrantType.tokenExchange,
     this.scope,
     this.additionalParameters,
@@ -331,20 +330,22 @@ class OidcAuthenticator extends RefreshAuthenticator<OidcToken> {
     Map<String, String>? additionalParameters,
     bool? preferEphemeralSession,
   }) async {
-    return super.signIn(AuthenticateSignInProvider(
-      scope: scope,
-      prompt: prompt,
-      loginHint: loginHint,
-      preferEphemeralSession: preferEphemeralSession,
-      additionalParameters: _buildAdditionalParameters(
-        nonce: nonce,
-        display: display,
-        maxAge: maxAge,
-        uiLocales: uiLocales,
-        idTokenHint: idTokenHint,
-        acrValues: acrValues,
+    return super.signIn(
+      AuthenticateSignInProvider(
+        scope: scope,
+        prompt: prompt,
+        loginHint: loginHint,
+        preferEphemeralSession: preferEphemeralSession,
+        additionalParameters: _buildAdditionalParameters(
+          nonce: nonce,
+          display: display,
+          maxAge: maxAge,
+          uiLocales: uiLocales,
+          idTokenHint: idTokenHint,
+          acrValues: acrValues,
+        ),
       ),
-    ));
+    );
   }
 
   Future<void> exchangeToken({
@@ -354,13 +355,15 @@ class OidcAuthenticator extends RefreshAuthenticator<OidcToken> {
     List<String>? scope,
     Map<String, String>? additionalParameters,
   }) async {
-    return super.signIn(TokenExchangeSignInProvider(
-      subjectToken: subjectToken,
-      subjectTokenType: subjectTokenType,
-      grantType: grantType,
-      scope: scope,
-      additionalParameters: additionalParameters,
-    ));
+    return super.signIn(
+      TokenExchangeSignInProvider(
+        subjectToken: subjectToken,
+        subjectTokenType: subjectTokenType,
+        grantType: grantType,
+        scope: scope,
+        additionalParameters: additionalParameters,
+      ),
+    );
   }
 
   Future<void> endSession({
@@ -368,12 +371,14 @@ class OidcAuthenticator extends RefreshAuthenticator<OidcToken> {
     String? postLogoutRedirectUrl,
     Map<String, String>? additionalParameters,
   }) async {
-    await _appAuth.endSession(EndSessionRequest(
-      idTokenHint: idToken,
-      discoveryUrl: config.discoveryUrl,
-      postLogoutRedirectUrl: postLogoutRedirectUrl,
-      additionalParameters: additionalParameters,
-    ));
+    await _appAuth.endSession(
+      EndSessionRequest(
+        idTokenHint: idToken,
+        discoveryUrl: config.discoveryUrl,
+        postLogoutRedirectUrl: postLogoutRedirectUrl,
+        additionalParameters: additionalParameters,
+      ),
+    );
   }
 
   ///
@@ -447,7 +452,7 @@ extension on TokenResponse {
       accessToken: accessToken!,
       accessTokenExpiration: accessTokenExpirationDateTime,
       tokenType: tokenType,
-      refreshToken: refreshToken!,
+      refreshToken: refreshToken,
       idToken: idToken,
     );
   }
@@ -476,8 +481,10 @@ class OidcToken extends AuthenticatorToken {
   String get authorizationHeader => '$tokenType $accessToken';
 
   int? get accessTokenExpiresIn => accessTokenExpiration != null
-      ? max(accessTokenExpiration!.difference(DateTime.now().toUtc()).inSeconds,
-          0)
+      ? max(
+          accessTokenExpiration!.difference(DateTime.now().toUtc()).inSeconds,
+          0,
+        )
       : null;
 
   bool get accessTokenExpired =>
@@ -496,7 +503,9 @@ class _OidcTokenStorage extends SecureAuthenticatorStorage<OidcToken> {
     await Future.wait([
       writeTokenvalue(_hiveAccessTokenKey, token.accessToken),
       writeTokenvalue(
-          _hiveAccessTokenExpirationKey, token.accessTokenExpiration),
+        _hiveAccessTokenExpirationKey,
+        token.accessTokenExpiration,
+      ),
       writeTokenvalue(_hiveTokenTypeKey, token.tokenType),
       writeTokenvalue(_hiveRefreshTokenKey, token.refreshToken),
       writeTokenvalue(_hiveIdTokenKey, token.idToken),
@@ -516,7 +525,7 @@ class _OidcTokenStorage extends SecureAuthenticatorStorage<OidcToken> {
 
   @override
   Future<OidcToken?> get token async {
-    final tokenValues = await Future.wait([
+    final tokenValues = await Future.wait<dynamic>([
       readTokenValue(_hiveAccessTokenKey),
       readTokenValue(_hiveAccessTokenExpirationKey),
       readTokenValue(_hiveTokenTypeKey),
