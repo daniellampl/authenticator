@@ -9,12 +9,12 @@ import 'package:authenticator/src/token.dart';
 abstract class Authenticator<T extends AuthenticatorToken> {
   /// {@macro authenticator.authenticator}
   Authenticator({
-    required this.client,
+    required this.delegate,
     AuthenticatorStorage<T>? localStorage,
   }) : localStorage = localStorage ?? EmptyAuthenticatorStorage<T>();
 
   final AuthenticatorStorage<T> localStorage;
-  final AuthenticatorClient<T> client;
+  final AuthenticatorDelegate<T> delegate;
 
   /// Whether [initialize] already got called.
   bool _initialized = false;
@@ -58,7 +58,7 @@ abstract class Authenticator<T extends AuthenticatorToken> {
     _assertInitialized();
 
     try {
-      final token = await client.signIn(signInProvider);
+      final token = await delegate.signIn(signInProvider);
       await setToken(token);
     } catch (e) {
       await clearToken();
@@ -107,10 +107,10 @@ class RefreshAuthenticator<T extends RefreshableAuthenticatorToken>
     extends Authenticator<T> {
   /// {@marco authenticator.refresh_authenticator}
   RefreshAuthenticator({
-    required RefreshAuthenticatorClient<T> client,
+    required RefreshAuthenticatorDelegate<T> delegate,
     AuthenticatorStorage<T>? localStorage,
   }) : super(
-          client: client,
+          delegate: delegate,
           localStorage: localStorage,
         );
 
@@ -124,7 +124,7 @@ class RefreshAuthenticator<T extends RefreshableAuthenticatorToken>
     }
 
     try {
-      final newToken = await (client as RefreshAuthenticatorClient<T>)
+      final newToken = await (delegate as RefreshAuthenticatorDelegate<T>)
           .refreshToken(_token!);
       await setToken(newToken);
     } catch (e) {
@@ -135,20 +135,22 @@ class RefreshAuthenticator<T extends RefreshableAuthenticatorToken>
   }
 }
 
-/// {@template authenticator.authentictor_client}
+/// {@template authenticator.authentictor_delegate}
 ///
 /// {@endtemplate}
-abstract class AuthenticatorClient<T extends AuthenticatorToken> {
-  /// {@marco authenticator.authentictor_client}
-  const AuthenticatorClient();
+abstract class AuthenticatorDelegate<T extends AuthenticatorToken> {
+  /// {@marco authenticator.authentictor_delegate}
+  const AuthenticatorDelegate();
 
   ///
   Future<T> signIn(SignInProvider signInProvider);
 }
 
 ///
-abstract class RefreshAuthenticatorClient<
-    T extends RefreshableAuthenticatorToken> extends AuthenticatorClient<T> {
+abstract class RefreshAuthenticatorDelegate<
+    T extends RefreshableAuthenticatorToken> extends AuthenticatorDelegate<T> {
+  const RefreshAuthenticatorDelegate();
+
   ///
   Future<T> refreshToken(T token);
 }
