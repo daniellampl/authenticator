@@ -44,6 +44,8 @@ class OidcGrantType {
       'urn:ietf:params:oauth:grant-type:token-exchange';
 
   static const String refreshToken = 'refresh_token';
+
+  static const String password = 'password';
 }
 
 /// Specifies how the Authorization Server displays the authentication and
@@ -111,16 +113,16 @@ class OidcConfig {
 ///
 class TokenExchangeSignInProvider extends SignInProvider {
   const TokenExchangeSignInProvider({
-    required this.subjectToken,
-    required this.subjectTokenType,
-    this.grantType = OidcGrantType.tokenExchange,
+    required this.grantType,
+    this.subjectToken,
+    this.subjectTokenType,
     this.scope,
     this.additionalParameters,
   });
 
-  final String subjectToken;
-  final String subjectTokenType;
   final String grantType;
+  final String? subjectToken;
+  final String? subjectTokenType;
   final List<String>? scope;
   final Map<String, String>? additionalParameters;
 }
@@ -231,10 +233,20 @@ class OidcAuthenticatorDelegate
   }
 
   Future<OidcToken> _exchangeToken(TokenExchangeSignInProvider provider) async {
-    final parameters = <String, String>{
-      'subject_token': provider.subjectToken,
-      'subject_token_type': provider.subjectTokenType,
-    };
+    final parameters = <String, String>{};
+
+    if (provider.subjectToken != null &&
+        (provider.additionalParameters != null &&
+            !provider.additionalParameters!.containsKey('subject_token'))) {
+      parameters['subject_token'] = provider.subjectToken!;
+    }
+
+    if (provider.subjectTokenType != null &&
+        (provider.additionalParameters != null &&
+            !provider.additionalParameters!
+                .containsKey('subject_token_type'))) {
+      parameters['subject_token_type'] = provider.subjectTokenType!;
+    }
 
     if (provider.additionalParameters != null) {
       parameters.addAll(provider.additionalParameters!);
@@ -350,9 +362,9 @@ class OidcAuthenticator extends RefreshAuthenticator<OidcToken> {
   }
 
   Future<void> exchangeToken({
-    required String subjectToken,
-    required String subjectTokenType,
-    String grantType = OidcGrantType.tokenExchange,
+    required String grantType,
+    String? subjectToken,
+    String? subjectTokenType,
     List<String>? scope,
     Map<String, String>? additionalParameters,
   }) async {
