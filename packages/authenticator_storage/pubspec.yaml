@@ -15,4 +15,4 @@ dependencies:
   hive_flutter: ^1.1.0
 
 dev_dependencies:
-  deckweiss_lints: ^1.0.0+1
+  deckweiss_lints: ^1.0.1
