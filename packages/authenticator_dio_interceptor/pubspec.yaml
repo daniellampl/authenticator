@@ -3,14 +3,14 @@ version: 0.1.0+1
 publish_to: none
 
 environment:
-  sdk: ">=2.12.0 <3.0.0"
+  sdk: ">=2.15.0 <3.0.0"
 
 dependencies:
   authenticator:
     git:
       url: https://github.com/daniellampl/authenticator.git
       path: packages/authenticator
-  dio: ^4.0.0
+  dio: ^5.0.0
 
 dev_dependencies:
   deckweiss_lints: ^1.0.1
