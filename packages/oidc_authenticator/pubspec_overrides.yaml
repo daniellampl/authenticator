@@ -1,0 +1,6 @@
+# melos_managed_dependency_overrides: authenticator,authenticator_storage
+dependency_overrides:
+  authenticator:
+    path: ../authenticator
+  authenticator_storage:
+    path: ../authenticator_storage
