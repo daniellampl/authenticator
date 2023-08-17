@@ -19,4 +19,4 @@ dependencies:
   http: ^1.1.0
 
 dev_dependencies:
-  deckweiss_lints: ^1.0.1
+  deckweiss_lints: ^2.0.1

@@ -48,7 +48,9 @@ class AuthenticatorDioInterceptor<T extends AuthenticatorToken>
 
   @override
   Future<void> onError(
-      DioException err, ErrorInterceptorHandler handler) async {
+    DioException err,
+    ErrorInterceptorHandler handler,
+  ) async {
     final response = err.response;
 
     if (response == null || !_shouldRefresh(response) || _token == null) {
