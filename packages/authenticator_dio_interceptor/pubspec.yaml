@@ -10,7 +10,7 @@ dependencies:
     git:
       url: https://github.com/daniellampl/authenticator.git
       path: packages/authenticator
-  dio: ^5.0.0
+  dio: ^5.3.2
 
 dev_dependencies:
   deckweiss_lints: ^1.0.1

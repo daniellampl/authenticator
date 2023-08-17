@@ -41,13 +41,14 @@ class AuthenticatorDioInterceptor<T extends AuthenticatorToken>
     try {
       final refreshResponse = await _refreshAndRetry(response);
       handler.resolve(refreshResponse);
-    } on DioError catch (error) {
+    } on DioException catch (error) {
       handler.reject(error);
     }
   }
 
   @override
-  Future<void> onError(DioError err, ErrorInterceptorHandler handler) async {
+  Future<void> onError(
+      DioException err, ErrorInterceptorHandler handler) async {
     final response = err.response;
 
     if (response == null || !_shouldRefresh(response) || _token == null) {
@@ -57,7 +58,7 @@ class AuthenticatorDioInterceptor<T extends AuthenticatorToken>
     try {
       final refreshedResponse = await _refreshAndRetry(response);
       handler.resolve(refreshedResponse);
-    } on DioError catch (error) {
+    } on DioException catch (error) {
       handler.next(error);
     }
   }
