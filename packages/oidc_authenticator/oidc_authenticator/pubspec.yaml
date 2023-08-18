@@ -1,0 +1,52 @@
+name: oidc_authenticator
+description: A new Flutter plugin project.
+version: 0.0.1
+publish_to: none
+
+environment:
+  sdk: ">=2.12.0 <3.0.0"
+
+dependencies:
+  authenticator:
+    git:
+      url: https://github.com/daniellampl/authenticator.git
+      path: packages/authenticator
+      ref: web-support
+  authenticator_storage:
+    git:
+      url: https://github.com/daniellampl/authenticator.git
+      path: packages/authenticator_storage
+      ref: web-support
+  flutter:
+    sdk: flutter
+  oidc_authenticator_app:
+    git:
+      url: https://github.com/daniellampl/authenticator.git
+      path: packages/oidc_authenticator/oidc_authenticator_app
+      ref: web-support
+  oidc_authenticator_platform_interface:
+    git:
+      url: https://github.com/daniellampl/authenticator.git
+      path: packages/oidc_authenticator/oidc_authenticator_platform_interface
+      ref: web-support
+  oidc_authenticator_web:
+    git:
+      url: https://github.com/daniellampl/authenticator.git
+      path: packages/oidc_authenticator/oidc_authenticator_web
+      ref: web-support
+
+dev_dependencies:
+  deckweiss_lints: ^2.0.1
+
+dependency_overrides:
+  http: ^1.1.0
+
+flutter:
+  plugin:
+    platforms:
+      android:
+        default_package: oidc_authenticator_app
+      ios:
+        default_package: oidc_authenticator_app
+      web:
+        default_package: oidc_authenticator_web

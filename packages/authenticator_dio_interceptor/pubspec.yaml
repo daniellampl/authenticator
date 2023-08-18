@@ -6,10 +6,12 @@ environment:
   sdk: ">=2.15.0 <3.0.0"
 
 dependencies:
+
   authenticator:
     git:
       url: https://github.com/daniellampl/authenticator.git
       path: packages/authenticator
+      ref: web-support
   dio: ^5.4.0
 
 dev_dependencies:

@@ -1,0 +1,25 @@
+name: oidc_authenticator_app
+description: An Authenticator implementation for OIDC identity provider.
+version: 0.1.0+1
+publish_to: none
+
+environment:
+  sdk: ">=2.12.0 <3.0.0"
+
+dependencies:
+  flutter_appauth: ^6.0.2
+  oidc_authenticator_platform_interface:
+    git:
+      url: https://github.com/daniellampl/authenticator.git
+      path: packages/oidc_authenticator/oidc_authenticator_platform_interface
+      ref: web-support
+
+dev_dependencies:
+  deckweiss_lints: ^2.0.1
+
+flutter:
+  plugin:
+    platforms:
+      web:
+        pluginClass: OidcAuthenticatorApp
+        fileName: oidc_authenticator_app.dart

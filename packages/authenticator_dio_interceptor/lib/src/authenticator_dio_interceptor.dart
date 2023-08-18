@@ -4,17 +4,19 @@ import 'package:authenticator/authenticator.dart';
 import 'package:dio/dio.dart';
 
 typedef ShouldRefresh = bool Function(int);
+typedef AuthorizationHeaderBuilder<T> = String Function(T);
 
 ///
-class AuthenticatorDioInterceptor<T extends AuthenticatorToken>
-    extends QueuedInterceptor {
+class AuthenticatorDioInterceptor<T> extends QueuedInterceptor {
   ///
   AuthenticatorDioInterceptor(
     this.authenticator, {
+    required this.authorizationHeaderBuilder,
     this.shouldRefresh,
   }) : _httpClient = Dio();
 
   final RefreshAuthenticator<T> authenticator;
+  final AuthorizationHeaderBuilder<T> authorizationHeaderBuilder;
   final ShouldRefresh? shouldRefresh;
   final Dio _httpClient;
 
@@ -89,7 +91,7 @@ class AuthenticatorDioInterceptor<T extends AuthenticatorToken>
     }
 
     requestOptions.headers[HttpHeaders.authorizationHeader] =
-        token.authorizationHeader;
+        authorizationHeaderBuilder(token);
   }
 
   bool _defaultShouldRefresh(int statusCode) {
