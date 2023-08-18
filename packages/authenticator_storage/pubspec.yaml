@@ -10,6 +10,7 @@ dependencies:
     git:
       url: https://github.com/daniellampl/authenticator.git
       path: packages/authenticator
+      ref: web-support
   flutter_secure_storage: ^9.0.0
   hive: ^2.2.3
   hive_flutter: ^1.1.0
