@@ -1,6 +1,8 @@
 import 'dart:async';
-import 'dart:html' as html;
+import 'dart:html';
+import 'dart:js';
 
+import 'package:flutter/services.dart';
 import 'package:flutter_web_plugins/flutter_web_plugins.dart';
 import 'package:oidc_authenticator_platform_interface/oidc_authenticator_platform_interface.dart';
 import 'package:oidc_client/oidc_client.dart';
@@ -14,30 +16,31 @@ class OidcAuthenticatorWeb extends OidcAuthenticatorPlatform {
 
   @override
   Future<OidcToken> authenticate(AuthenticateParams params) async {
-    final client = await _getClient(
-      clientId: params.clientId,
-      discoveryUrl: params.discoveryUrl,
-    );
-
-    final flow = Flow.authorizationCodeWithPKCE(
-      client: client,
-      redirectUrl: Uri.parse(params.redirectUrl),
-      scopes: params.scopes,
-    );
-
-    final authWindow = _openBrowserTab(url: flow.authenticationUri);
+    final authenticationWindow = _openAuthenticationWindow();
 
     try {
+      final client = await _getClient(
+        clientId: params.clientId,
+        discoveryUrl: params.discoveryUrl,
+      );
+
+      final flow = Flow.authorizationCodeWithPKCE(
+        client: client,
+        redirectUrl: Uri.parse(params.redirectUrl),
+        scopes: params.scopes,
+      );
+
+      authenticationWindow.location.href = flow.authenticationUri.toString();
+
       final token = await _authorize(flow: flow);
       if (token == null) {
-        // TODO(daniellampl): adjust exception
-        throw Exception();
+        throw Exception('No token reseive from callback!');
       }
+
       return token;
     } catch (e) {
+      authenticationWindow.close();
       rethrow;
-    } finally {
-      authWindow.close();
     }
   }
 
@@ -82,21 +85,21 @@ class OidcAuthenticatorWeb extends OidcAuthenticatorPlatform {
     );
   }
 
-  html.WindowBase _openBrowserTab({required Uri url}) {
-    return html.window.open(url.toString(), '_blank');
+  WindowBase _openAuthenticationWindow() {
+    return window.open('', '_blank');
   }
 
   Future<OidcToken?> _authorize({required Flow flow}) async {
-    final c = Completer<OidcToken?>();
-
-    await html.window.onMessage.first.then((event) async {
+    await for (final MessageEvent event in window.onMessage) {
       final uri = Uri.parse(event.data.toString());
       final tokenResponse = await flow.callback(uri.queryParameters);
+      return tokenResponse.toOidcToken();
+    }
 
-      c.complete(tokenResponse.toOidcToken());
-    });
-
-    return c.future;
+    throw PlatformException(
+      code: 'error',
+      message: 'No incoming window.onMessage event',
+    );
   }
 }
 
