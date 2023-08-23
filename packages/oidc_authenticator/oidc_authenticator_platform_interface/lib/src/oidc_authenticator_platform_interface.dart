@@ -1,5 +1,4 @@
 import 'package:oidc_authenticator_platform_interface/oidc_authenticator_platform_interface.dart';
-import 'package:oidc_authenticator_platform_interface/src/method_channel.dart';
 import 'package:plugin_platform_interface/plugin_platform_interface.dart';
 
 abstract class OidcAuthenticatorPlatform extends PlatformInterface {
@@ -8,11 +7,9 @@ abstract class OidcAuthenticatorPlatform extends PlatformInterface {
 
   static final Object _token = Object();
 
-  static OidcAuthenticatorPlatform _instance = MethodChannelOpeninSignin();
+  static OidcAuthenticatorPlatform _instance = _PlaceholderPlatformImpl();
 
   /// The default instance of [OidcAuthenticatorPlatform] to use.
-  ///
-  /// Defaults to [MethodChannelOpeninSignin].
   static OidcAuthenticatorPlatform get instance => _instance;
 
   /// Platform-specific implementations should set this with their own
@@ -23,9 +20,23 @@ abstract class OidcAuthenticatorPlatform extends PlatformInterface {
     _instance = instance;
   }
 
-  Future<OidcToken> authenticate(AuthenticateParams params);
+  Future<OidcToken> authenticate(AuthenticateParams params) {
+    throw UnimplementedError(
+      'authenticate is not implemented on the current platform.',
+    );
+  }
 
-  Future<OidcToken> exchangeToken(ExchangeTokenParams params);
+  Future<OidcToken> exchangeToken(ExchangeTokenParams params) {
+    throw UnimplementedError(
+      'exchangeToken is not implemented on the current platform.',
+    );
+  }
 
-  Future<OidcToken> refreshToken(RefreshTokenParams params);
+  Future<OidcToken> refreshToken(RefreshTokenParams params) {
+    throw UnimplementedError(
+      'refreshToken is not implemented on the current platform.',
+    );
+  }
 }
+
+class _PlaceholderPlatformImpl extends OidcAuthenticatorPlatform {}

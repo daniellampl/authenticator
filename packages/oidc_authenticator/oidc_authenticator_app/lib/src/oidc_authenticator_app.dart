@@ -1,12 +1,14 @@
 import 'package:flutter_appauth/flutter_appauth.dart';
 import 'package:oidc_authenticator_platform_interface/oidc_authenticator_platform_interface.dart';
 
-class OidcAuthenticatorApp extends OidcAuthenticatorPlatform {
-  OidcAuthenticatorApp();
+const _noTokenResponseReceivedErrorCode = 'no_token_response_received';
+const _noAccessTokenAvailableErrorCode = 'no_access_token_available';
+const _unknownErrorCode = 'unknown_error';
 
+class OidcAuthenticatorApp extends OidcAuthenticatorPlatform {
   final FlutterAppAuth _appAuth = const FlutterAppAuth();
 
-  static void registerWith([Object? object]) {
+  static void registerWith() {
     OidcAuthenticatorPlatform.instance = OidcAuthenticatorApp();
   }
 
@@ -26,14 +28,14 @@ class OidcAuthenticatorApp extends OidcAuthenticatorPlatform {
       );
     } catch (e) {
       throw OidcAuthenticatorException(
-        code: "_unknownErrorCode",
+        code: _unknownErrorCode,
         exception: e,
       );
     }
 
     if (tokenResponse == null) {
       throw OidcAuthenticatorException(
-        code: "_noTokenResponseReceivedErrorCode",
+        code: _noTokenResponseReceivedErrorCode,
         message: 'No token response received from identity provider',
       );
     }
@@ -58,14 +60,14 @@ class OidcAuthenticatorApp extends OidcAuthenticatorPlatform {
       );
     } catch (e) {
       throw OidcAuthenticatorException(
-        code: "_unknownErrorCode",
+        code: _unknownErrorCode,
         exception: e,
       );
     }
 
     if (tokenResponse == null) {
       throw OidcAuthenticatorException(
-        code: "_noTokenResponseReceivedErrorCode",
+        code: _noTokenResponseReceivedErrorCode,
         message: 'No token response received from identity provider on '
             'token exchange!',
       );
@@ -90,14 +92,14 @@ class OidcAuthenticatorApp extends OidcAuthenticatorPlatform {
       );
     } catch (e) {
       throw OidcAuthenticatorException(
-        code: "_unknownErrorCode",
+        code: _unknownErrorCode,
         exception: e,
       );
     }
 
     if (tokenResponse == null) {
       throw OidcAuthenticatorException(
-        code: "_noTokenResponseReceivedErrorCode",
+        code: _noTokenResponseReceivedErrorCode,
         message: 'No token response received from identity provider!',
       );
     }
@@ -110,7 +112,7 @@ extension on TokenResponse {
   OidcToken toOidcToken() {
     if (accessToken == null) {
       throw OidcAuthenticatorException(
-        code: 'no_access_token_available',
+        code: _noAccessTokenAvailableErrorCode,
         message:
             'The received token response does not include an access_token!',
       );

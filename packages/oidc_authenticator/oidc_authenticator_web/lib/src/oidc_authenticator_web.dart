@@ -1,6 +1,5 @@
 import 'dart:async';
 import 'dart:html';
-import 'dart:js';
 
 import 'package:flutter/services.dart';
 import 'package:flutter_web_plugins/flutter_web_plugins.dart';
@@ -8,8 +7,6 @@ import 'package:oidc_authenticator_platform_interface/oidc_authenticator_platfor
 import 'package:oidc_client/oidc_client.dart';
 
 class OidcAuthenticatorWeb extends OidcAuthenticatorPlatform {
-  OidcAuthenticatorWeb();
-
   static void registerWith(Registrar registrar) {
     OidcAuthenticatorPlatform.instance = OidcAuthenticatorWeb();
   }
@@ -54,7 +51,6 @@ class OidcAuthenticatorWeb extends OidcAuthenticatorPlatform {
     final token = await client.getToken(
       grantType: params.grantType,
       additionalParameters: params.parameters,
-      // TODO(daniellampl): make sure the right parameters are getting sent
     );
 
     return token.toOidcToken();
