@@ -20,6 +20,7 @@ dev_dependencies:
 flutter:
   plugin:
     platforms:
-      web:
-        pluginClass: OidcAuthenticatorApp
-        fileName: oidc_authenticator_app.dart
+      android:
+        dartPluginClass: OidcAuthenticatorApp
+      ios:
+        dartPluginClass: OidcAuthenticatorApp
