@@ -123,7 +123,7 @@ abstract class RefreshAuthenticator<T> extends Authenticator<T> {
 
     try {
       final newToken = await (super.delegate as RefreshAuthenticatorDelegate<T>)
-          .refreshToken(_token!);
+          .refreshToken(_token as T);
       await setToken(newToken);
     } catch (e) {
       await clearToken();

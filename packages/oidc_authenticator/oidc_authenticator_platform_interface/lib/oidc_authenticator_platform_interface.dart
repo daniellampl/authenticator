@@ -1,2 +1,2 @@
 export 'src/model/model.dart';
-export 'src/platform_interface.dart';
+export 'src/oidc_authenticator_platform_interface.dart';
