@@ -32,20 +32,9 @@ class OidcAuthenticatorWeb extends OidcAuthenticatorPlatform {
 
     final authWindow = html.window.open(
       flow.authenticationUri.toString(),
-      'Twitch Auth',
+      'Auth',
       'width=800, height=900, scrollbars=yes',
     );
-
-    authWindow.addEventListener('onbeforeunload', (event) {
-      if (!completer.isCompleted) {
-        completer.completeError(
-          PlatformException(
-            code: 'authentication_cancelled_by_user',
-            message: 'The user cancelled the authentication!',
-          ),
-        );
-      }
-    });
 
     html.window.onMessage.listen((event) async {
       if (event.data.toString().contains('access_token=')) {
@@ -114,9 +103,9 @@ extension on TokenResponse {
   OidcToken toOidcToken() {
     return OidcToken(
       accessToken: accessToken!,
-      refreshToken: refreshToken,
-      // accessTokenExpiration: ,
+      expiresIn: expiresIn,
       idToken: idToken.toString(),
+      refreshToken: refreshToken,
       tokenType: tokenType,
     );
   }
