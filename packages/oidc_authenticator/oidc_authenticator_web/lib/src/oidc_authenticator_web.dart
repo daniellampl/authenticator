@@ -37,22 +37,12 @@ class OidcAuthenticatorWeb extends OidcAuthenticatorPlatform {
     );
 
     html.window.onMessage.listen((event) async {
-      if (event.data.toString().contains('access_token=')) {
-        final uri = Uri.parse(event.data.toString());
-        final tokenResponse = await flow.callback(uri.queryParameters);
+      final uri = Uri.parse(event.data.toString());
+      final tokenResponse = await flow.callback(uri.queryParameters);
 
-        completer.complete(tokenResponse.toOidcToken());
+      completer.complete(tokenResponse.toOidcToken());
 
-        authWindow.close();
-      } else {
-        completer.completeError(
-          PlatformException(
-            code: 'unexpected_authentication_response',
-            message: 'The response received from the authentication process is '
-                'in a wrong format!',
-          ),
-        );
-      }
+      authWindow.close();
     });
 
     return completer.future;
