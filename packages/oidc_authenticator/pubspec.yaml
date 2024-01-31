@@ -15,8 +15,8 @@ dependencies:
     git:
       url: https://github.com/daniellampl/authenticator.git
       path: packages/authenticator_storage
-  flutter_appauth: ^6.0.2
-  http: ^1.1.0
+  flutter_appauth: ^6.0.4
+  http: ^1.2.0
 
 dev_dependencies:
   deckweiss_lints: ^2.0.1
