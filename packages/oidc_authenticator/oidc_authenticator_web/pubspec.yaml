@@ -11,8 +11,8 @@ dependencies:
     sdk: flutter
   flutter_web_plugins:
     sdk: flutter
-  http: ^1.1.0
-  
+  http: ^1.2.0
+
   oidc_authenticator_platform_interface:
     git:
       url: https://github.com/daniellampl/authenticator.git
@@ -26,9 +26,6 @@ dependencies:
 
 dev_dependencies:
   deckweiss_lints: ^2.0.1
-
-dependency_overrides:
-  http: ^1.1.0
 
 flutter:
   plugin:
