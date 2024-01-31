@@ -38,9 +38,6 @@ dependencies:
 dev_dependencies:
   deckweiss_lints: ^2.0.1
 
-dependency_overrides:
-  http: ^1.1.0
-
 flutter:
   plugin:
     platforms:

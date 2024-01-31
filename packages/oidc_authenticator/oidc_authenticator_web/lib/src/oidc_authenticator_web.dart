@@ -1,7 +1,6 @@
 import 'dart:async';
 import 'dart:html' as html;
 
-import 'package:flutter/services.dart';
 import 'package:flutter_web_plugins/flutter_web_plugins.dart';
 import 'package:oidc_authenticator_platform_interface/oidc_authenticator_platform_interface.dart';
 import 'package:oidc_client/oidc_client.dart';
