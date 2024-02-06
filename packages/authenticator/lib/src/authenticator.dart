@@ -1,12 +1,11 @@
 import 'dart:async';
 
 import 'package:authenticator/src/storage.dart';
-import 'package:authenticator/src/token.dart';
 
 /// {@template authenticator.authenticator}
 ///
 /// {@endtemplate}
-abstract class Authenticator<T extends AuthenticatorToken> {
+abstract class Authenticator<T> {
   /// {@macro authenticator.authenticator}
   Authenticator({
     required this.delegate,
@@ -103,8 +102,7 @@ abstract class Authenticator<T extends AuthenticatorToken> {
 /// {@template authenticator.refresh_authenticator}
 ///
 /// {@endtemplate}
-abstract class RefreshAuthenticator<T extends AuthenticatorToken>
-    extends Authenticator<T> {
+abstract class RefreshAuthenticator<T> extends Authenticator<T> {
   /// {@marco authenticator.refresh_authenticator}
   RefreshAuthenticator({
     required RefreshAuthenticatorDelegate<T> delegate,
@@ -125,7 +123,7 @@ abstract class RefreshAuthenticator<T extends AuthenticatorToken>
 
     try {
       final newToken = await (super.delegate as RefreshAuthenticatorDelegate<T>)
-          .refreshToken(_token!);
+          .refreshToken(_token as T);
       await setToken(newToken);
     } catch (e) {
       await clearToken();
@@ -138,7 +136,7 @@ abstract class RefreshAuthenticator<T extends AuthenticatorToken>
 /// {@template authenticator.authentictor_delegate}
 ///
 /// {@endtemplate}
-abstract class AuthenticatorDelegate<T extends AuthenticatorToken> {
+abstract class AuthenticatorDelegate<T> {
   /// {@marco authenticator.authentictor_delegate}
   const AuthenticatorDelegate();
 
@@ -147,7 +145,7 @@ abstract class AuthenticatorDelegate<T extends AuthenticatorToken> {
 }
 
 ///
-abstract class RefreshAuthenticatorDelegate<T extends AuthenticatorToken>
+abstract class RefreshAuthenticatorDelegate<T>
     extends AuthenticatorDelegate<T> {
   const RefreshAuthenticatorDelegate();
 

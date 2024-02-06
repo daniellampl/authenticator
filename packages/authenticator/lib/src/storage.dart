@@ -1,11 +1,9 @@
-import 'package:authenticator/authenticator.dart';
-
 /// LocalStorage is used to persist the user session in the device.
 ///
 /// See also:
 ///
 ///   * [EmptyAuthenticatorStorage], used to disable session persistence
-abstract class AuthenticatorStorage<T extends AuthenticatorToken> {
+abstract class AuthenticatorStorage<T> {
   const AuthenticatorStorage();
 
   /// Initialize the storage to persist session.
@@ -22,8 +20,7 @@ abstract class AuthenticatorStorage<T extends AuthenticatorToken> {
 
 /// A [AuthenticatorStorage] implementation that does nothing. Use this to
 /// disable persistence.
-class EmptyAuthenticatorStorage<T extends AuthenticatorToken>
-    implements AuthenticatorStorage<T> {
+class EmptyAuthenticatorStorage<T> implements AuthenticatorStorage<T> {
   /// Creates a [AuthenticatorStorage] instance that disables persistence.
   const EmptyAuthenticatorStorage();
 
