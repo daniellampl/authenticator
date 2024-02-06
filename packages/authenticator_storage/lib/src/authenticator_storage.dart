@@ -1,101 +1,106 @@
 import 'dart:convert';
 
-import 'package:authenticator/authenticator.dart';
 import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 import 'package:hive_flutter/hive_flutter.dart';
 
+const _hiveBoxName = 'authenticator';
 const _encryptionKeySecureStorageKey = 'authenticator_encryption_key';
 
-///
-abstract class SecureAuthenticatorStorage<T extends AuthenticatorToken>
-    implements AuthenticatorStorage<T> {
-  ///
-  SecureAuthenticatorStorage({
-    FlutterSecureStorage? secureStorage,
-  }) : secureStorage = secureStorage ?? const FlutterSecureStorage();
+class HiveBoxService {
+  HiveBoxService();
 
-  final FlutterSecureStorage secureStorage;
+  Box<dynamic>? _box;
 
-  late _KeyValueStorage _storage;
+  bool get _isOpen => _box != null && _box!.isOpen;
 
-  @override
-  Future<void> initialize() async {
-    final encryptionKey =
-        await _readEncryptionKey() ?? await _generateEncryptionKey();
-
+  Future<void> open(String encryptionKey) async {
+    // this means we still use hive and have to migrate.
     await Hive.initFlutter('authenticator');
-    final box = await Hive.openBox<dynamic>(
+
+    _box = await Hive.openBox<dynamic>(
       _hiveBoxName,
       encryptionCipher: HiveAesCipher(base64Url.decode(encryptionKey)),
     );
-
-    _storage = _HiveKeyValueStorage(box);
   }
 
-  ///
-  Future<void> deleteTokenValue(String key) {
-    return _storage.delete(key);
+  dynamic read(String key) async {
+    if (_isOpen) {
+      return _box!.get(key);
+    } else {
+      return null;
+    }
   }
 
+  Future<void> destroy() async {
+    if (_isOpen) {
+      return _box!.deleteFromDisk();
+    }
+  }
+}
+
+///
+class SecureAuthenticatorStorage {
   ///
-  Future<dynamic> readTokenValue(String key) async {
-    return _storage.read(key);
+  SecureAuthenticatorStorage({
+    FlutterSecureStorage? flutterSecureStorage,
+    HiveBoxService? hiveService,
+  })  : _secureStorage = flutterSecureStorage ?? const FlutterSecureStorage(),
+        _hiveBoxService = hiveService ?? HiveBoxService();
+
+  final HiveBoxService _hiveBoxService;
+  final FlutterSecureStorage _secureStorage;
+
+  /// Migrate form a Hive [Box] to [FlutterSecureStorage] only if an encryption
+  /// key for the [Box] is available.
+  Future<void> migrate(List<String> keys) async {
+    String? encryptionKey;
+    try {
+      encryptionKey = await _readEncryptionKey();
+
+      if (encryptionKey != null) {
+        // remove encryption key so that the next time we initialize the storage
+        // we do not have to migrate anymore.
+        await _deleteEncryptionKey();
+      }
+    } catch (e) {
+      // error can ocurr whene encryption doesn't match due to Android backup.
+      // In this case we just delete the whole secure stoarge, so we do not end
+      // up reading corrupted information anymore.
+      // see: https://github.com/mogol/flutter_secure_storage/issues/210
+      await _secureStorage.deleteAll();
+    }
+
+    if (encryptionKey != null) {
+      await _hiveBoxService.open(encryptionKey);
+
+      final values = keys.map(_hiveBoxService.read).toList();
+
+      await Future.wait([
+        for (var i = 0; i < values.length; i++)
+          if (values[i] != null) writeTokenvalue(keys[i], values[i]),
+      ]);
+
+      await _hiveBoxService.destroy();
+    }
   }
 
-  ///
+  Future<void> deleteTokenValue(String key) async {
+    await _secureStorage.delete(key: key);
+  }
+
+  Future<String?> readTokenValue(String key) async {
+    return _secureStorage.read(key: key);
+  }
+
   Future<void> writeTokenvalue(String key, dynamic value) {
-    return _storage.write(key, value);
-  }
-
-  Future<String> _generateEncryptionKey() async {
-    final key = Hive.generateSecureKey();
-    await secureStorage.write(
-      key: _encryptionKeySecureStorageKey,
-      value: base64UrlEncode(key),
-    );
-
-    return (await _readEncryptionKey())!;
+    return _secureStorage.write(key: key, value: value);
   }
 
   Future<String?> _readEncryptionKey() {
-    return secureStorage.read(key: _encryptionKeySecureStorageKey);
-  }
-}
-
-const _hiveBoxName = 'authenticator';
-
-/// A [_KeyValueStorage] that uses `hive` for storing token values.
-class _HiveKeyValueStorage implements _KeyValueStorage {
-  /// Creates a [_KeyValueStorage] instance that uses `hive` for storing
-  /// token values.
-  const _HiveKeyValueStorage(this.box);
-
-  final Box<dynamic> box;
-
-  @override
-  Future<void> delete(String key) {
-    return box.delete(key);
+    return readTokenValue(_encryptionKeySecureStorageKey);
   }
 
-  @override
-  Future<dynamic> read(String key) async {
-    return box.get(key);
+  Future<void> _deleteEncryptionKey() {
+    return deleteTokenValue(_encryptionKeySecureStorageKey);
   }
-
-  @override
-  Future<void> write(String key, dynamic value) {
-    return box.put(key, value);
-  }
-}
-
-/// An interface for a simple key value storages.
-abstract class _KeyValueStorage {
-  /// Reads a value that is stored under a [key].
-  Future<dynamic> read(String key);
-
-  /// Stores a [value] for a specific [key] in the storage.
-  Future<void> write(String key, dynamic value);
-
-  /// Deletes the value of a [key] from the storage.
-  Future<void> delete(String key);
 }

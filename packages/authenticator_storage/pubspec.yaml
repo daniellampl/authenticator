@@ -16,3 +16,5 @@ dependencies:
 
 dev_dependencies:
   deckweiss_lints: ^2.0.1
+  mocktail: ^1.0.3
+  test: ^1.25.2
