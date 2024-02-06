@@ -84,11 +84,11 @@ class SecureAuthenticatorStorage {
     }
   }
 
-  Future<void> deleteTokenValue(String key) async {
-    await _secureStorage.delete(key: key);
+  Future<void> deleteTokenValue(String key) {
+    return _secureStorage.delete(key: key);
   }
 
-  Future<String?> readTokenValue(String key) async {
+  Future<String?> readTokenValue(String key) {
     return _secureStorage.read(key: key);
   }
 
