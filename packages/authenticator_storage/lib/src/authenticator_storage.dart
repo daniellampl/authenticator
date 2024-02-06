@@ -77,7 +77,7 @@ class SecureAuthenticatorStorage {
 
       await Future.wait([
         for (var i = 0; i < values.length; i++)
-          if (values[i] != null) writeTokenvalue(keys[i], values[i]),
+          if (values[i] != null) writeTokenvalue(keys[i], values[i].toString()),
       ]);
 
       await _hiveBoxService.destroy();
@@ -92,7 +92,7 @@ class SecureAuthenticatorStorage {
     return _secureStorage.read(key: key);
   }
 
-  Future<void> writeTokenvalue(String key, dynamic value) {
+  Future<void> writeTokenvalue(String key, String value) {
     return _secureStorage.write(key: key, value: value);
   }
 

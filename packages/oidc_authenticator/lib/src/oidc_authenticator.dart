@@ -537,13 +537,17 @@ class _OidcTokenStorage extends AuthenticatorStorage<OidcToken> {
   Future<void> persistToken(OidcToken token) async {
     await Future.wait([
       _storage.writeTokenvalue(_hiveAccessTokenKey, token.accessToken),
-      _storage.writeTokenvalue(
-        _hiveAccessTokenExpirationKey,
-        token.accessTokenExpiration?.toIso8601String(),
-      ),
-      _storage.writeTokenvalue(_hiveTokenTypeKey, token.tokenType),
-      _storage.writeTokenvalue(_hiveRefreshTokenKey, token.refreshToken),
-      _storage.writeTokenvalue(_hiveIdTokenKey, token.idToken),
+      if (token.accessTokenExpiration != null)
+        _storage.writeTokenvalue(
+          _hiveAccessTokenExpirationKey,
+          token.accessTokenExpiration!.toIso8601String(),
+        ),
+      if (token.tokenType != null)
+        _storage.writeTokenvalue(_hiveTokenTypeKey, token.tokenType!),
+      if (token.refreshToken != null)
+        _storage.writeTokenvalue(_hiveRefreshTokenKey, token.refreshToken!),
+      if (token.idToken != null)
+        _storage.writeTokenvalue(_hiveIdTokenKey, token.idToken!),
     ]);
   }
 
