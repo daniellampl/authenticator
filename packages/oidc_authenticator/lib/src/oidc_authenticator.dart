@@ -536,43 +536,43 @@ class _OidcTokenStorage extends AuthenticatorStorage<OidcToken> {
   @override
   Future<void> persistToken(OidcToken token) async {
     await Future.wait([
-      _storage.writeTokenvalue(_hiveAccessTokenKey, token.accessToken),
+      _storage.write(_hiveAccessTokenKey, token.accessToken),
       if (token.accessTokenExpiration != null)
-        _storage.writeTokenvalue(
+        _storage.write(
           _hiveAccessTokenExpirationKey,
           token.accessTokenExpiration!.toIso8601String(),
         ),
       if (token.tokenType != null)
-        _storage.writeTokenvalue(_hiveTokenTypeKey, token.tokenType!),
+        _storage.write(_hiveTokenTypeKey, token.tokenType!),
       if (token.refreshToken != null)
-        _storage.writeTokenvalue(_hiveRefreshTokenKey, token.refreshToken!),
+        _storage.write(_hiveRefreshTokenKey, token.refreshToken!),
       if (token.idToken != null)
-        _storage.writeTokenvalue(_hiveIdTokenKey, token.idToken!),
+        _storage.write(_hiveIdTokenKey, token.idToken!),
     ]);
   }
 
   @override
   Future<void> removePersistedToken() async {
     await Future.wait([
-      _storage.deleteTokenValue(_hiveAccessTokenKey),
-      _storage.deleteTokenValue(_hiveAccessTokenExpirationKey),
-      _storage.deleteTokenValue(_hiveTokenTypeKey),
-      _storage.deleteTokenValue(_hiveRefreshTokenKey),
-      _storage.deleteTokenValue(_hiveIdTokenKey),
+      _storage.delete(_hiveAccessTokenKey),
+      _storage.delete(_hiveAccessTokenExpirationKey),
+      _storage.delete(_hiveTokenTypeKey),
+      _storage.delete(_hiveRefreshTokenKey),
+      _storage.delete(_hiveIdTokenKey),
     ]);
   }
 
   @override
   Future<OidcToken?> get token async {
-    final tokenValues = await Future.wait<dynamic>([
-      _storage.readTokenValue(_hiveAccessTokenKey),
-      _storage.readTokenValue(_hiveAccessTokenExpirationKey),
-      _storage.readTokenValue(_hiveTokenTypeKey),
-      _storage.readTokenValue(_hiveRefreshTokenKey),
-      _storage.readTokenValue(_hiveIdTokenKey),
+    final tokenValues = await Future.wait([
+      _storage.read(_hiveAccessTokenKey),
+      _storage.read(_hiveAccessTokenExpirationKey),
+      _storage.read(_hiveTokenTypeKey),
+      _storage.read(_hiveRefreshTokenKey),
+      _storage.read(_hiveIdTokenKey),
     ]);
 
-    final accessToken = tokenValues[0] as String?;
+    final accessToken = tokenValues[0];
     if (accessToken == null) {
       return null;
     }
@@ -580,11 +580,11 @@ class _OidcTokenStorage extends AuthenticatorStorage<OidcToken> {
     return OidcToken(
       accessToken: accessToken,
       accessTokenExpiration: tokenValues[1] != null
-          ? DateTime.parse(tokenValues[1] as String)
+          ? DateTime.tryParse(tokenValues[1] as String)
           : null,
-      tokenType: tokenValues[2] as String?,
-      refreshToken: tokenValues[3] as String?,
-      idToken: tokenValues[4] as String?,
+      tokenType: tokenValues[2],
+      refreshToken: tokenValues[3],
+      idToken: tokenValues[4],
     );
   }
 }

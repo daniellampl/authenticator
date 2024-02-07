@@ -23,7 +23,7 @@ class HiveBoxService {
     );
   }
 
-  dynamic read(String key) async {
+  dynamic read(String key) {
     if (_isOpen) {
       return _box!.get(key);
     } else {
@@ -77,30 +77,52 @@ class SecureAuthenticatorStorage {
 
       await Future.wait([
         for (var i = 0; i < values.length; i++)
-          if (values[i] != null) writeTokenvalue(keys[i], values[i].toString()),
+          write(keys[i], values[i]?.toString()),
       ]);
 
       await _hiveBoxService.destroy();
     }
   }
 
-  Future<void> deleteTokenValue(String key) {
-    return _secureStorage.delete(key: key);
+  Future<void> delete(String key) {
+    return _secureStorage.delete(
+      key: key,
+      aOptions: const AndroidOptions(
+        encryptedSharedPreferences: true,
+      ),
+    );
   }
 
-  Future<String?> readTokenValue(String key) {
-    return _secureStorage.read(key: key);
+  Future<String?> read(String key) {
+    return _secureStorage.read(
+      key: key,
+      aOptions: const AndroidOptions(
+        encryptedSharedPreferences: true,
+      ),
+    );
   }
 
-  Future<void> writeTokenvalue(String key, String value) {
-    return _secureStorage.write(key: key, value: value);
+  Future<void> write(String key, String? value) {
+    if (value == null) {
+      return delete(key);
+    } else {
+      return _secureStorage.write(
+        key: key,
+        value: value,
+        aOptions: const AndroidOptions(
+          encryptedSharedPreferences: true,
+        ),
+      );
+    }
   }
 
   Future<String?> _readEncryptionKey() {
-    return readTokenValue(_encryptionKeySecureStorageKey);
+    // not stored in encrypted SharedPreferences
+    return _secureStorage.read(key: _encryptionKeySecureStorageKey);
   }
 
   Future<void> _deleteEncryptionKey() {
-    return deleteTokenValue(_encryptionKeySecureStorageKey);
+    // not stored in encrypted SharedPreferences
+    return _secureStorage.delete(key: _encryptionKeySecureStorageKey);
   }
 }
