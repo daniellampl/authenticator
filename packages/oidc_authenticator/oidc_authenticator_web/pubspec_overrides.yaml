@@ -1,6 +1,0 @@
-# melos_managed_dependency_overrides: oidc_authenticator_platform_interface,oidc_client
-dependency_overrides:
-  oidc_authenticator_platform_interface:
-    path: ../oidc_authenticator_platform_interface
-  oidc_client:
-    path: ../oidc_client

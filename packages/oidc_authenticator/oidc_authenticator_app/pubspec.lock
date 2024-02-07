@@ -26,12 +26,28 @@ packages:
     source: hosted
     version: "2.0.1"
   flutter:
-    dependency: "direct main"
+    dependency: transitive
     description: flutter
     source: sdk
     version: "0.0.0"
-  flutter_web_plugins:
+  flutter_appauth:
     dependency: "direct main"
+    description:
+      name: flutter_appauth
+      sha256: "4ad7d446888b1486642226db6aa04ffb4651d76388715aba6e6e572ebeb915c3"
+      url: "https://pub.dev"
+    source: hosted
+    version: "6.0.4"
+  flutter_appauth_platform_interface:
+    dependency: transitive
+    description:
+      name: flutter_appauth_platform_interface
+      sha256: "44feaa7058191b5d3cd7c9ff195262725773643121bcada172d49c2ddcff71cb"
+      url: "https://pub.dev"
+    source: hosted
+    version: "6.0.0"
+  flutter_web_plugins:
+    dependency: transitive
     description: flutter
     source: sdk
     version: "0.0.0"
@@ -51,8 +67,15 @@ packages:
       url: "https://pub.dev"
     source: hosted
     version: "1.10.0"
-  plugin_platform_interface:
+  oidc_authenticator_platform_interface:
     dependency: "direct main"
+    description:
+      path: "../oidc_authenticator_platform_interface"
+      relative: true
+    source: path
+    version: "0.0.1"
+  plugin_platform_interface:
+    dependency: transitive
     description:
       name: plugin_platform_interface
       sha256: "4820fbfdb9478b1ebae27888254d445073732dae3d6ea81f0b7e06d5dedc3f02"
@@ -82,3 +105,4 @@ packages:
     version: "0.3.0"
 sdks:
   dart: ">=3.2.0-194.0.dev <4.0.0"
+  flutter: ">=3.0.0"
