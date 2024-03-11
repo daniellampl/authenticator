@@ -6,14 +6,11 @@
 abstract class AuthenticatorStorage<T> {
   const AuthenticatorStorage();
 
-  /// Initialize the storage to persist session.
-  Future<void> initialize();
+  /// Persist a session in the device.
+  Future<void> persistToken(T token);
 
   /// Remove the current persisted session.
   Future<void> removePersistedToken();
-
-  /// Persist a session in the device.
-  Future<void> persistToken(T token);
 
   Future<T?> get token;
 }
@@ -23,9 +20,6 @@ abstract class AuthenticatorStorage<T> {
 class EmptyAuthenticatorStorage<T> implements AuthenticatorStorage<T> {
   /// Creates a [AuthenticatorStorage] instance that disables persistence.
   const EmptyAuthenticatorStorage();
-
-  @override
-  Future<void> initialize() async {}
 
   @override
   Future<void> persistToken(T token) async {}

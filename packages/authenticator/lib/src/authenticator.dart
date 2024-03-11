@@ -42,8 +42,6 @@ abstract class Authenticator<T> {
       return;
     }
 
-    await localStorage.initialize();
-
     final persistedToken = await localStorage.token;
     if (persistedToken != null) {
       _updateToken(persistedToken);

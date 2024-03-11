@@ -16,22 +16,6 @@ class OidcTokenStorage extends AuthenticatorStorage<OidcToken> {
   final SecureAuthenticatorStorage _storage;
 
   @override
-  Future<void> initialize() async {
-    // this method should become obsolte once enough users migrated.
-    try {
-      await _storage.migrate([
-        _hiveAccessTokenKey,
-        _hiveAccessTokenExpirationKey,
-        _hiveTokenTypeKey,
-        _hiveRefreshTokenKey,
-        _hiveIdTokenKey,
-      ]);
-    } catch (e) {
-      // ignore errors, we just don't migrate.
-    }
-  }
-
-  @override
   Future<void> persistToken(OidcToken token) async {
     await Future.wait([
       _storage.write(_hiveAccessTokenKey, token.accessToken),
